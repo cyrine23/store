@@ -11,27 +11,26 @@ environment {
         NEXUS_CREDENTIAL_ID = "nexus-user-credentials"
     }
 
-    stages {
-        stage('Hello') {
-            steps {
-                echo 'Hello World'
-            }
-        }
-        stage("Maven CLEAN"){
+       stages{
+           
+        stage('MVN CLEAN') {
             steps {
                 sh "mvn clean"
-
             }
         }
-         stage('Maven PACKAGE') {
-		 steps {
-			    sh "mvn package"
-			  }
-		  }
-         stage("Maven COMPILE"){
+        stage('MVN COMPILE') {
             steps {
-                sh"mvn compile"
-
+                sh "mvn compile"
+            }
+        }
+        stage('MVN PACKAGE') {
+         steps {
+                sh "mvn package -DskipTests"
+              }
+          }
+        stage('MVN TEST') {
+            steps {
+                sh "mvn test"
             }
         }
         stage("Publish to Nexus Repository Manager") {
@@ -43,7 +42,7 @@ environment {
                     artifactPath = filesByGlob[0].path;
                     artifactExists = fileExists artifactPath;
                     if(artifactExists) {
-                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+                        echo "** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
                         nexusArtifactUploader(
                             nexusVersion: NEXUS_VERSION,
                             protocol: NEXUS_PROTOCOL,
@@ -69,42 +68,36 @@ environment {
                 }
             }
         }
-         stage('JUNIT TESTS') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Maven SONARQUBE') {
+  stage('Maven SONARQUBE') {
             steps {
                 sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar"
             }
         }
-        stage('Building our image') {
-            steps {
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+
+        stage('Building our image') { 
+            steps { 
+                script { 
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
                 }
-            }
+            } 
         }
 
-        stage('Deploy our image') {
-            steps {
-                script {
-                    docker.withRegistry( '', registryCredential ) {
-                        dockerImage.push()
+        stage('Deploy our image') { 
+            steps { 
+                script { 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
                     }
-                }
+                } 
             }
         }
-
-
         stage('DOCKER COMPOSE') {
              steps {
                 sh 'docker-compose up -d '
-            }
+            } 
         }
+   }
 
-    }
        post {
           success {
                          mail to: "sirine.fatnassi.27@gmail.com",
