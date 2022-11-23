@@ -6,7 +6,7 @@ environment {
         dockerImage = ''
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "192.168.1.103:8081"
+        NEXUS_URL = "192.168.1.154:8081"
         NEXUS_REPOSITORY = "maven-releases"
         NEXUS_CREDENTIAL_ID = "nexus-user-credentials"
     }
@@ -76,7 +76,7 @@ environment {
         }
         stage('Maven SONARQUBE') {
             steps {
-                sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=wajdi54040245"
+                sh "mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=sonar"
             }
         }
         stage('Building our image') {
@@ -107,12 +107,12 @@ environment {
     }
        post {
           success {
-                         mail to: "wajdi.bel.haj.yahya@gmail.com",
+                         mail to: "sirine.fatnassi.27@gmail.com",
                          subject: "Pipeline Success",
                          body: "success on job ${env.JOB_NAME}, Build Number: ${env.BUILD_NUMBER}, Build URL: ${env.BUILD_URL}"
                      }
                      failure {
-                         mail to: "wajdi.bel.haj.yahya@gmail.com",
+                         mail to: "sirine.fatnassi.27@gmail.com",
                          subject: "Pipeline Failure",
                          body: "Failure on job ${env.JOB_NAME}, Build Number: ${env.BUILD_NUMBER}, Build URL: ${env.BUILD_URL} "
                      }
