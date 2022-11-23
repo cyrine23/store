@@ -1,7 +1,7 @@
 pipeline {
     agent any
 environment {
-        registry = "wajdi03/storewithspring"
+        registry = "cyrine27/storewithspring"
         registryCredential = 'dockerHub'
         dockerImage = ''
         NEXUS_VERSION = "nexus3"
