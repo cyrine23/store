@@ -39,13 +39,7 @@ services:
     stdin_open: true
     tty: true
 
-  angular-app:
-    #The docker file in FE, builds and provides the docker image.
-    image: cyrine27/storewithangular:latest
-    depends_on:
-      - spring-app
-    ports:
-      - 4200:4200
+
 
 volumes:
   db:
